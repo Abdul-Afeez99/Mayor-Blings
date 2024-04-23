@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "mayor-blings"
+version = "0.1.0"
+description = ""
+authors = ["AbdulAfeez <abdulafeez.adeyemo@kibo.school>"]
+readme = "README.md"
+packages = [{include = "mayor_blings"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django-rest-framework = "^0.1.0"
+djangorestframework-simplejwt = "^5.3.1"
+drf-yasg = "^1.21.7"
+python-dotenv = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
