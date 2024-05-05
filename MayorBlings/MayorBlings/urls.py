@@ -36,8 +36,10 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('auth/', include('Authentication.urls')), # Include the urls from the Authentication app
+    path('', include('Product.urls')), # Include the urls from the Product app
+    path('admin/', include('Admin.urls')), # Include the urls from the Admin app
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
