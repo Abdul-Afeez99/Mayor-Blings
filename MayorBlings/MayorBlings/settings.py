@@ -68,8 +68,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
     "https://mayor-blings.vercel.app/",
-    "http://mayorblings.com/",
-    
+    "https://www.mayorblings.com/",
+    "https://mayorblings.com/",
 ]
 
 ROOT_URLCONF = 'MayorBlings.urls'
