@@ -5,3 +5,4 @@ db.sqlite3
 # ignore environment variable
 .env
 migrations/*
+*0002_remove_products_product_image_productimages.py

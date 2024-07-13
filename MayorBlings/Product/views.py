@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics, permissions, response, status
-from .models import Categories, Products
+from .models import Categories, Products, ProductImages
 from .serializers import CategoriesSerializer, ProductsSerializer
 from rest_framework.views import APIView
 from drf_yasg import openapi
@@ -13,11 +13,24 @@ class ListAllCategories(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
     
 # List all products view    
-class ListAllProducts(generics.ListAPIView):
-    queryset = Products.objects.all()
-    serializer_class = ProductsSerializer
+class ListAllProducts(APIView):
     permission_classes = [permissions.AllowAny]
-
+    
+    def get(self, request):
+        products  = Products.objects.all()
+        product_list = []
+        for product in products:
+            product_list.append({
+                "name": product.product_name,
+                "description": product.product_description,
+                "image": [
+                    prod.image for prod in ProductImages.objects.filter(product=product.id)
+                ],
+                "quantity": product.product_quantity,
+                "price": product.product_price
+            })
+        return response.Response(product_list, status=status.HTTP_200_OK)
+    
 # List all products in a category view
 class ListAllProductsInCategory(APIView):
     permission_classes = [permissions.AllowAny]
@@ -42,7 +55,9 @@ class ListAllProductsInCategory(APIView):
             product_list.append({
                 "name": product.product_name,
                 "description": product.product_description,
-                "image": product.product_image,
+                "image": [
+                    prod.image for prod in ProductImages.objects.filter(product=product.id)
+                ],
                 "quantity": product.product_quantity,
                 "price": product.product_price
             })
@@ -99,7 +114,10 @@ class GetProductById(APIView):
             properties={
                 "name": openapi.Schema(type=openapi.TYPE_STRING, description="name of the product"),
                 "description": openapi.Schema(type=openapi.TYPE_STRING, description="desccription of the product"),
-                "image": openapi.Schema(type=openapi.TYPE_STRING, description="Link to the product image"),
+                "image": openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    items=openapi.Schema(type=openapi.TYPE_STRING),
+                    description="Link to the product image"),
                 "quantity": openapi.Schema(type=openapi.TYPE_INTEGER, description="product quantity"),
                 "price": openapi.Schema(type=openapi.TYPE_NUMBER, description="product price")
             }
@@ -111,7 +129,9 @@ class GetProductById(APIView):
         return response.Response({
             "name": product_obj.product_name,
             "description": product_obj.product_description,
-            "image": product_obj.product_image,
+            "image": [
+                prod.image for prod in ProductImages.objects.filter(product=product_obj)
+                ],
             "quantity": product_obj.product_quantity,
             "price": product_obj.product_price
             }, status=status.HTTP_200_OK)   
