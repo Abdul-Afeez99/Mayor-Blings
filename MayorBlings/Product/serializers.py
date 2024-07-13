@@ -7,7 +7,7 @@ class CategoriesSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class ProductsSerializer(serializers.ModelSerializer):
-    category = serializers.PrimaryKeyRelatedField(queryset=Categories.objects.all())
+    category = serializers.CharField(max_length=200)
     product_name = serializers.CharField(max_length=200)
     product_description = serializers.CharField(max_length=10000)
     product_quantity = serializers.IntegerField()
@@ -26,8 +26,9 @@ class ProductsSerializer(serializers.ModelSerializer):
         ]
         
     def save(self, **kwargs):
+        category_obj = Categories.objects.get(category_name = self.validated_data['category'])
         product = Products(
-            category = self.validated_data['category'],
+            category = category_obj.id,
             product_name = self.validated_data['product_name'],
             product_description = self.validated_data['product_description'],
             product_quantity = self.validated_data['product_quantity'],

@@ -20,6 +20,7 @@ class ListAllProducts(APIView):
         products  = Products.objects.all()
         product_list = []
         for product in products:
+            category_obj = Categories.objects.get(id=product.category)
             product_list.append({
                 "name": product.product_name,
                 "description": product.product_description,
@@ -27,7 +28,8 @@ class ListAllProducts(APIView):
                     prod.image for prod in ProductImages.objects.filter(product=product.id)
                 ],
                 "quantity": product.product_quantity,
-                "price": product.product_price
+                "price": product.product_price,
+                "category": category_obj.category_name
             })
         return response.Response(product_list, status=status.HTTP_200_OK)
     
@@ -49,6 +51,7 @@ class ListAllProductsInCategory(APIView):
     
     def get(self, request):
         category_id = self.request.query_params.get('category_id')
+        category_obj = Categories.objects.get(id=category_id)
         products = Products.objects.filter(category=category_id)
         product_list = []
         for product in products:
@@ -59,7 +62,8 @@ class ListAllProductsInCategory(APIView):
                     prod.image for prod in ProductImages.objects.filter(product=product.id)
                 ],
                 "quantity": product.product_quantity,
-                "price": product.product_price
+                "price": product.product_price,
+                "category": category_obj.category_name
             })
         return response.Response(product_list, status=status.HTTP_200_OK)
 
@@ -126,6 +130,7 @@ class GetProductById(APIView):
     def get(self, request):
         product_id = self.request.query_params.get('product_id')
         product_obj = Products.objects.get(id=product_id)
+        category_obj = Categories.objects.get(id=product_obj.category)
         return response.Response({
             "name": product_obj.product_name,
             "description": product_obj.product_description,
@@ -133,5 +138,6 @@ class GetProductById(APIView):
                 prod.image for prod in ProductImages.objects.filter(product=product_obj)
                 ],
             "quantity": product_obj.product_quantity,
-            "price": product_obj.product_price
+            "price": product_obj.product_price,
+            "category": category_obj.category_name
             }, status=status.HTTP_200_OK)   
