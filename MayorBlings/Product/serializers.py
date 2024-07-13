@@ -28,7 +28,7 @@ class ProductsSerializer(serializers.ModelSerializer):
     def save(self, **kwargs):
         category_obj = Categories.objects.get(category_name = self.validated_data['category'])
         product = Products(
-            category = category_obj.id,
+            category = category_obj,
             product_name = self.validated_data['product_name'],
             product_description = self.validated_data['product_description'],
             product_quantity = self.validated_data['product_quantity'],

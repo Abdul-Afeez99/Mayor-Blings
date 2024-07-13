@@ -20,8 +20,8 @@ class ListAllProducts(APIView):
         products  = Products.objects.all()
         product_list = []
         for product in products:
-            category_obj = Categories.objects.get(id=product.category)
             product_list.append({
+                "id": product.id,
                 "name": product.product_name,
                 "description": product.product_description,
                 "image": [
@@ -29,7 +29,7 @@ class ListAllProducts(APIView):
                 ],
                 "quantity": product.product_quantity,
                 "price": product.product_price,
-                "category": category_obj.category_name
+                "category": product.category.category_name
             })
         return response.Response(product_list, status=status.HTTP_200_OK)
     
@@ -51,11 +51,11 @@ class ListAllProductsInCategory(APIView):
     
     def get(self, request):
         category_id = self.request.query_params.get('category_id')
-        category_obj = Categories.objects.get(id=category_id)
         products = Products.objects.filter(category=category_id)
         product_list = []
         for product in products:
             product_list.append({
+                "id": product.id,
                 "name": product.product_name,
                 "description": product.product_description,
                 "image": [
@@ -63,7 +63,7 @@ class ListAllProductsInCategory(APIView):
                 ],
                 "quantity": product.product_quantity,
                 "price": product.product_price,
-                "category": category_obj.category_name
+                "category": product.category.category_name
             })
         return response.Response(product_list, status=status.HTTP_200_OK)
 
@@ -123,14 +123,14 @@ class GetProductById(APIView):
                     items=openapi.Schema(type=openapi.TYPE_STRING),
                     description="Link to the product image"),
                 "quantity": openapi.Schema(type=openapi.TYPE_INTEGER, description="product quantity"),
-                "price": openapi.Schema(type=openapi.TYPE_NUMBER, description="product price")
+                "price": openapi.Schema(type=openapi.TYPE_NUMBER, description="product price"),
+                "category": openapi.Schema(type=openapi.TYPE_STRING, description="product category")
             }
         ))}
     )
     def get(self, request):
         product_id = self.request.query_params.get('product_id')
         product_obj = Products.objects.get(id=product_id)
-        category_obj = Categories.objects.get(id=product_obj.category)
         return response.Response({
             "name": product_obj.product_name,
             "description": product_obj.product_description,
@@ -139,5 +139,5 @@ class GetProductById(APIView):
                 ],
             "quantity": product_obj.product_quantity,
             "price": product_obj.product_price,
-            "category": category_obj.category_name
+            "category": product_obj.category.category_name
             }, status=status.HTTP_200_OK)   
